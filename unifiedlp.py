@@ -253,7 +253,7 @@ SECTION: CADANGAN TUGASAN UTK KELAS AKAN DATANG
 1. DO NOT use double asterisks (**) anywhere.
 2. DO NOT use bullet points (-) for listings. You must use sequential numbered listings (1., 2., 3., 4.) for all content segments.
 3. EXCEPTION FOR KEYWORDS / KATA KUNCI: Do NOT use any numbers, list markers, or bullets. Just list the words.
-4. ABSOLUTE MALAY LANGUAGE COMPLIANCE: Never use the word 'MURID'. You must strictly replace it with the word 'PELAJAR' across all sections.
+4. ABSOLUTE MALAY LANGUAGE COMPLIANCE: Jangan gunakan perkataan 'MURID'. Menyeluruh kontek dalam Bahasa Melayu sahaja, digantikan dengan perkataan 'PELAJAR'.
 5. Every section marker MUST start explicitly on a new line with 'SECTION: ' followed by the uppercase title.\n\n"""
     
     if platform == "PEDATI Plan":
