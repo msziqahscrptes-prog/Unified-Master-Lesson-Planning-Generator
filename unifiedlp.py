@@ -212,7 +212,10 @@ def generate_lesson_plan(topic, syllabus, extra_context, api_key, model_name, pl
     - [Aktiviti ransangan dan pelan peralihan untuk pelajaran hari esok]"""
 
     # Assemble Prompts Based on Selected App Platform Routes
-    prompt = f"Topic: {topic}. Syllabus Code: {syllabus}. Context: {extra_context}.\n{lang_instruction}\n\nCRITICAL FORMATTING: DO NOT use double asterisks (**) anywhere. Section headers must be full CAPITAL LETTERS. Do not use the word MURID, replace it with PELAJAR \n\n"
+    prompt = f"Topic: {topic}. Syllabus Code: {syllabus}. Context: {extra_context}.\n{lang_instruction}\n\nCRITICAL FORMATTING: \
+        DO NOT use double asterisks (**) anywhere. \
+        Section headers must be full CAPITAL LETTERS. \
+        Jangan gunakan perkataan MURID, perlu digantikan dengan perkataan PELAJAR di dalam kontek Bahasa Melayu sahaja \n\n"
     
     if platform == "PEDATI Plan":
         prompt += core_criteria + dig_cit + pedati_stages
