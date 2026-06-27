@@ -21,7 +21,7 @@ LANG_MAP = {
     },
     "Malay": {
         "title_prefix": "RANCANGAN PENGAJARAN",
-        "resources_title": "SUMBER & BAHAN BANTU MEMGAJAR",
+        "resources_title": "SUMBER & BAHAN BANTU MENGAJAR",
         "resources_body": "Papan pintar, Chromebook, Meja tulis, Projektor, Perkongsian skrin dengan komputer riba",
         "keywords_key": "KATA KUNCI",
         "pedati_key": "PEDATI",
@@ -82,141 +82,179 @@ def generate_lesson_plan(topic, syllabus, extra_context, api_key, model_name, pl
     
     lang_instruction = "Generate the entire lesson plan in English. NO Malay terms." if lang == "English" else "Penulisan penuh adalah di dalam BAHASA MELAYU sahaja. JANGAN gunakan istilah Bahasa Inggeris."
     
-    # Base Content Segments based on language picks
+    # Structural Prompt Setup
     if lang == "English":
-        core_criteria = """SECTION: LESSON OBJECTIVES
-    [4 points]
-    SECTION: LESSON OUTCOMES
-    [4 points]
-    SECTION: SUCCESS CRITERIA
-    [4 points]
-    SECTION: PREREQUISITE
-    [1 point]
-    SECTION: KEYWORDS
-    [6 items]
-    SECTION: HOTS
-    [4 main domains from Bloom's Taxonomy]"""
+        core_criteria = """
+SECTION: LESSON OBJECTIVES
+1. [Objective 1]
+2. [Objective 2]
+3. [Objective 3]
+4. [Objective 4]
+
+SECTION: LESSON OUTCOMES
+1. [Outcome 1]
+2. [Outcome 2]
+3. [Outcome 3]
+4. [Outcome 4]
+
+SECTION: SUCCESS CRITERIA
+1. [Criteria 1]
+2. [Criteria 2]
+3. [Criteria 3]
+4. [Criteria 4]
+
+SECTION: PREREQUISITE
+1. [Prerequisite description]
+
+SECTION: KEYWORDS
+[Provide 6 standalone technical terms separated by commas or lines without numbers or bullets]
+
+SECTION: HOTS
+1. [HOTS point 1]
+2. [HOTS point 2]
+3. [HOTS point 3]
+4. [HOTS point 4]"""
         
-        dig_cit = """\n    SECTION: DIGITAL CITIZENSHIP
-    [4 points on ethical tech use/Chromebooks/Canva/YouTube]"""
+        dig_cit = """\n
+SECTION: DIGITAL CITIZENSHIP
+1. [Digital citizenship point 1]
+2. [Digital citizenship point 2]
+3. [Digital citizenship point 3]
+4. [Digital citizenship point 4]"""
         
-        pedati_stages = """\n    SECTION: PEDATI STAGES
-    STAGE: P [PRIOR KNOWLEDGE] | CB: [Activity] | SB: [Activity]
-    STAGE: E [ENGAGE] | CB: [Activity] | SB: [Activity]
-    STAGE: D [DEVELOP] | CB: [Activity] | SB: [Activity]
-    STAGE: A [APPLY] | CB: [Activity] | SB: [Activity]
-    STAGE: T [TEST] | CB: [Activity] | SB: [Activity]
-    STAGE: I [IMPROVE] | CB: [Activity] | SB: [Activity]"""
+        pedati_stages = """\n
+SECTION: PEDATI STAGES
+STAGE: P [PRIOR KNOWLEDGE] | CB: [Activity] | SB: [Activity]
+STAGE: E [ENGAGE] | CB: [Activity] | SB: [Activity]
+STAGE: D [DEVELOP] | CB: [Activity] | SB: [Activity]
+STAGE: A [APPLY] | CB: [Activity] | SB: [Activity]
+STAGE: T [TEST] | CB: [Activity] | SB: [Activity]
+STAGE: I [IMPROVE] | CB: [Activity] | SB: [Activity]"""
         
-        universal_blocks = """\n    SECTION: OPENING LESSON CONTENT
-    [Hook activity and transition plan]
+        universal_blocks = """\n
+SECTION: OPENING LESSON CONTENT
+1. [Hook activity and transition plan]
 
-    SECTION: DIFFERENTIATION STRATEGIES (GREEN)
-    - HA (Higher Achiever): [1 challenging activity]
+SECTION: DIFFERENTIATION STRATEGIES (GREEN)
+1. HA (Higher Achiever): [1 challenging activity]
 
-    SECTION: DIFFERENTIATION STRATEGIES (YELLOW)
-    - MA (Medium Achiever): [1 core activity]
+SECTION: DIFFERENTIATION STRATEGIES (YELLOW)
+1. MA (Medium Achiever): [1 core activity]
 
-    SECTION: DIFFERENTIATION STRATEGIES (RED)
-    - LA (Lower Achiever): [1 scaffolded activity]
+SECTION: DIFFERENTIATION STRATEGIES (RED)
+1. LA (Lower Achiever): [1 scaffolded activity]
 
-    SECTION: BLENDED LEARNING Activity ONE (15 MINS)
-    - Activity 1: [Descriptions]
-    - ----------------------------------------------------------------------------
-    - Teacher Preparation: [Step-by-step before lesson]
-    - ----------------------------------------------------------------------------
-    - Objectives: [3 points]
-    - ----------------------------------------------------------------------------
-    - Student Tasks: [Step-by-step details]
+SECTION: BLENDED LEARNING ACTIVITY ONE (15 MINS)
+1. Activity 1: [Descriptions]
+2. Teacher Preparation: [Step-by-step before lesson]
+3. Objectives: [3 points]
+4. Student Tasks: [Step-by-step details]
 
-    SECTION: BLENDED LEARNING Activity TWO (15 MINS)
-    - Activity 2: [Descriptions]
-    - -----------------------------------------------------------------------------
-    - Teacher Preparation: [Step-by-step before lesson]
-    - -----------------------------------------------------------------------------
-    - Objectives: [3 points]
-    - -----------------------------------------------------------------------------
-    - Student Tasks: [Step-by-step details]
+SECTION: BLENDED LEARNING ACTIVITY TWO (15 MINS)
+1. Activity 2: [Descriptions]
+2. Teacher Preparation: [Step-by-step before lesson]
+3. Objectives: [3 points]
+4. Student Tasks: [Step-by-step details]
     
-    SECTION: PLENARY (EXIT TICKET)
-    [2-3 minute closing activity]
+SECTION: PLENARY (EXIT TICKET)
+1. [2-3 minute closing activity]
 
-    SECTION: HOMEWORK
-    [Task assigned based on topic]
+SECTION: HOMEWORK
+1. [Task assigned based on topic]
 
-    SECTION: SUGGESTED WAY FORWARD TASK
-    - [Hook activity and transition plan for next day lesson]"""
+SECTION: SUGGESTED WAY FORWARD TASK
+1. [Hook activity and transition plan for next day lesson]"""
         
-    else: # MALAY CORE STRUCTURAL DEFINITIONS
-        core_criteria = """SECTION: OBJEKTIF PEMBELAJARAN
-    [4 mata/poin]
-    SECTION: HASIL PEMBELAJARAN
-    [4 mata/poin]
-    SECTION: KRITERIA KEJAYAAN
-    [4 mata/poin]
-    SECTION: PENGETAHUAN SEDIA ADA
-    [1 mata/poin]
-    SECTION: KATA KUNCI
-    [6 item kosa kata]
-    SECTION: KBAT
-    [4 domain utama dalam Taksonomi Bloom]"""
+    else: # MALAY TEMPLATE DESIGN ROUTING RULES
+        core_criteria = """
+SECTION: OBJEKTIF PEMBELAJARAN
+1. [Objektif 1]
+2. [Objektif 2]
+3. [Objektif 3]
+4. [Objektif 4]
+
+SECTION: HASIL PEMBELAJARAN
+1. [Hasil 1]
+2. [Hasil 2]
+3. [Hasil 3]
+4. [Hasil 4]
+
+SECTION: KRITERIA KEJAYAAN
+1. [Kriteria 1]
+2. [Kriteria 2]
+3. [Kriteria 3]
+4. [Kriteria 4]
+
+SECTION: PENGETAHUAN SEDIA ADA
+1. [Pengetahuan sedia ada]
+
+SECTION: KATA KUNCI
+[Sediakan 6 item kosa kata sahaja tanpa sebarang nombor siri atau simbol bullet]
+
+SECTION: KBAT
+1. [KBAT poin 1]
+2. [KBAT poin 2]
+3. [KBAT poin 3]
+4. [KBAT poin 4]"""
         
-        dig_cit = """\n    SECTION: KEWARGANEGARAAN DIGITAL
-    [4 mata mengenai penggunaan sumber dalam talian seperti saluran youtube atau aplikasi canva atau penggunaan chromebook atau peranti digital]"""
+        dig_cit = """\n
+SECTION: KEWARGANEGARAAN DIGITAL
+1. [Kewarganegaraan digital poin 1]
+2. [Kewarganegaraan digital poin 2]
+3. [Kewarganegaraan digital poin 3]
+4. [Kewarganegaraan digital poin 4]"""
         
-        pedati_stages = """\n    SECTION: PERINGKAT PEDATI
-    STAGE: P [PRIOR KNOWLEDGE] | CB: [Aktiviti] | SB: [Aktiviti]
-    STAGE: E [ENGAGE] | CB: [Aktiviti] | SB: [Aktiviti]
-    STAGE: D [DEVELOP] | CB: [Aktiviti] | SB: [Aktiviti]
-    STAGE: A [APPLY] | CB: [Aktiviti] | SB: [Aktiviti]
-    STAGE: T [TEST] | CB: [Aktiviti] | SB: [Aktiviti]
-    STAGE: I [IMPROVE] | CB: [Aktiviti] | SB: [Aktiviti]"""
+        pedati_stages = """\n
+SECTION: PERINGKAT PEDATI
+STAGE: P [PRIOR KNOWLEDGE] | CB: [Aktiviti] | SB: [Aktiviti]
+STAGE: E [ENGAGE] | CB: [Aktiviti] | SB: [Aktiviti]
+STAGE: D [DEVELOP] | CB: [Aktiviti] | SB: [Aktiviti]
+STAGE: A [APPLY] | CB: [Aktiviti] | SB: [Aktiviti]
+STAGE: T [TEST] | CB: [Aktiviti] | SB: [Aktiviti]
+STAGE: I [IMPROVE] | CB: [Aktiviti] | SB: [Aktiviti]"""
         
-        universal_blocks = """\n    SECTION: KANDUNGAN PEMBUKAAN PELAJARAN
-    [Aktiviti Set Induksi dan pelan peralihan]
+        universal_blocks = """\n
+SECTION: KANDUNGAN PEMBUKAAN PELAJARAN
+1. [Aktiviti Set Induksi dan pelan peralihan]
 
-    SECTION: STRATEGI PERBEZAAN (HIJAU)
-    - HA (Higher Achiever): [1 aktiviti mencabar]
+SECTION: STRATEGI PERBEZAAN (HIJAU)
+1. HA (Higher Achiever): [1 aktiviti mencabar]
 
-    SECTION: STRATEGI PERBEZAAN (KUNING)
-    - MA (Medium Achiever): [1 aktiviti teras]
+SECTION: STRATEGI PERBEZAAN (KUNING)
+1. MA (Medium Achiever): [1 aktiviti teras]
 
-    SECTION: STRATEGI PERBEZAAN (MERAH)
-    - LA (Lower Achiever): [1 aktiviti sokongan/scaffolded]
+SECTION: STRATEGI PERBEZAAN (MERAH)
+1. LA (Lower Achiever): [1 aktiviti sokongan/scaffolded]
 
-    SECTION: AKTIVITI PEMBELAJARAN TERADUN SATU (15 MINIT)
-    - Aktiviti 1: [Penerangan]
-    - ----------------------------------------------------------------------------
-    - Persediaan Guru: [Langkah demi langkah sebelum pelajaran]
-    - ----------------------------------------------------------------------------
-    - Objektif: [3 mata/poin]
-    - ----------------------------------------------------------------------------
-    - Tugasan Pelajar: [Butiran langkah demi langkah]
+SECTION: AKTIVITI PEMBELAJARAN TERADUN SATU (15 MINIT)
+1. Aktiviti 1: [Penerangan]
+2. Persediaan Guru: [Langkah demi langkah sebelum pelajaran]
+3. Objektif: [3 mata/poin]
+4. Tugasan Pelajar: [Butiran langkah demi langkah]
 
-    SECTION: AKTIVITI PEMBELAJARAN TERADUN DUA (15 MINIT)
-    - Aktiviti 2: [Penerangan]
-    - -----------------------------------------------------------------------------
-    - Persediaan Guru: [Langkah demi langkah sebelum pelajaran]
-    - -----------------------------------------------------------------------------
-    - Objektif: [3 mata/poin]
-    - -----------------------------------------------------------------------------
-    - Tugasan Pelajar: [Butiran langkah demi langkah]
+SECTION: AKTIVITI PEMBELAJARAN TERADUN DUA (15 MINIT)
+1. Aktiviti 2: [Penerangan]
+2. Persediaan Guru: [Langkah demi langkah sebelum pelajaran]
+3. Objektif: [3 mata/poin]
+4. Tugasan Pelajar: [Butiran langkah demi langkah]
     
-    SECTION: PLENARI (TIKET KELUAR)
-    [Aktiviti penutup 2-3 minit]
+SECTION: PLENARI (TIKET KELUAR)
+1. [Aktiviti penutup 2-3 minit]
 
-    SECTION: KERJA RUMAH
-    [Tugasan diberikan berdasarkan topik]
+SECTION: KERJA RUMAH
+1. [Tugasan diberikan berdasarkan topik]
 
-    SECTION: CADANGAN TUGASAN UTK KELAS AKAN DATANG
-    - [Aktiviti ransangan dan pelan peralihan untuk pelajaran hari esok]"""
+SECTION: CADANGAN TUGASAN UTK KELAS AKAN DATANG
+1. [Aktiviti ransangan dan pelan peralihan untuk pelajaran hari esok]"""
 
-    # Assemble Prompts Based on Selected App Platform Routes
-    prompt = f"Topic: {topic}. Syllabus Code: {syllabus}. Context: {extra_context}.\n{lang_instruction}\n\nCRITICAL FORMATTING: \
-        DO NOT use double asterisks (**) anywhere. \
-        DO NOT use bulleted points for listings, use numbered line listing only, except for KEYWORD criteria, this is for both English and Malay context. \
-        Section headers must be full CAPITAL LETTERS. \
-        Jangan gunakan perkataan MURID, perlu digantikan dengan perkataan PELAJAR di dalam kontek Bahasa Melayu sahaja \n\n"
+    # Assemble and fine-tune structural prompt guidelines
+    prompt = f"Topic: {topic}. Syllabus Code: {syllabus}. Context: {extra_context}.\n{lang_instruction}\n\n"
+    prompt += """CRITICAL FORMATTING RULES:
+1. DO NOT use double asterisks (**) anywhere.
+2. DO NOT use bullet points (-) for listings. You must use sequential numbered listings (1., 2., 3., 4.) for all content segments.
+3. EXCEPTION FOR KEYWORDS / KATA KUNCI: Do NOT use any numbers, list markers, or bullets. Just list the words.
+4. ABSOLUTE MALAY LANGUAGE COMPLIANCE: Never use the word 'MURID'. You must strictly replace it with the word 'PELAJAR' across all sections.
+5. Every section marker MUST start explicitly on a new line with 'SECTION: ' followed by the uppercase title.\n\n"""
     
     if platform == "PEDATI Plan":
         prompt += core_criteria + dig_cit + pedati_stages
@@ -230,7 +268,10 @@ def generate_lesson_plan(topic, syllabus, extra_context, api_key, model_name, pl
     try:
         response = model.generate_content(prompt)
         if response.candidates and response.candidates[0].content.parts:
-            return response.text.replace("**", "")
+            # Universal string cleaning for absolute compliance
+            clean_text = response.text.replace("**", "")
+            clean_text = clean_text.replace("Murid", "Pelajar").replace("murid", "pelajar").replace("MURID", "PELAJAR")
+            return clean_text
         else:
             return "⚠️ The AI returned an empty response. Please wait 60 seconds and try again."
     except Exception as e:
@@ -258,7 +299,7 @@ def create_word_export(topic, syllabus, text, lang):
     meta = LANG_MAP[lang]
     doc = Document()
     
-    # Enforce Letter Geometry Profile (8.5" x 11.5") & 0.5" Margins
+    # Enforce Letter Geometry Profile & 0.5" Margins
     section = doc.sections[0]
     section.page_width, section.page_height = Inches(8.5), Inches(11.5)
     section.top_margin = section.bottom_margin = Inches(0.5)
@@ -321,7 +362,7 @@ def create_word_export(topic, syllabus, text, lang):
         title = lines[0].strip().upper().replace("**", "")
         content_lines = lines[1:]
 
-        # Create Headings (14pt Bold Capitals)
+        # Create Headings (Forced 14pt Bold Capitals)
         p_sec = doc.add_paragraph()
         run_sec_title = p_sec.add_run(title)
         run_sec_title.bold = True
@@ -331,11 +372,11 @@ def create_word_export(topic, syllabus, text, lang):
         # 1. Custom 3x2 Matrix Processing for Keywords / Kata Kunci
         if meta["keywords_key"] in title:
             keywords_list = []
-            for line in content_lines:
-                item = line.replace("**", "").strip()
-                if item:
-                    if '.' in item and item.split('.', 1)[0].strip().isdigit():
-                        item = item.split('.', 1)[1].strip()
+            # Split by commas or lines to extract words cleanly
+            raw_content = " ".join(content_lines).replace(",", " ")
+            for item in raw_content.split():
+                item = item.strip().replace(".", "").replace("-", "")
+                if item and not item.isdigit():
                     keywords_list.append(item)
             
             while len(keywords_list) < 6: keywords_list.append("")
@@ -383,7 +424,7 @@ def create_word_export(topic, syllabus, text, lang):
             
             doc.add_paragraph().paragraph_format.space_after = Pt(6)
             
-        # 3. Standard Grid Box Structures Default Block Configuration
+        # 3. Standard Grid Box Structures Default Block Configuration (Forced 12pt Content)
         else:
             table = doc.add_table(rows=1, cols=1)
             table.style = 'Table Grid'
@@ -416,7 +457,7 @@ def create_word_export(topic, syllabus, text, lang):
         
     hod_table.rows[1].height = Pt(40)
 
-    # Apply rigid tight formatting compression across all matrix container tables
+    # Tight paragraph formatting overrides across tables
     for t in [admin_table, hod_table]:
         for row in t.rows:
             for cell in row.cells:
@@ -448,7 +489,7 @@ if st.button("🚀 GENERATE LESSON PLAN", type="primary"):
 if 'master_out' in st.session_state:
     st.divider()
     st.subheader("👁️ AI PREVIEW")
-    st.text_area("GENERATED CONTENT CONTENT PREVIEW", st.session_state['master_out'], height=350)
+    st.text_area("GENERATED CONTENT PREVIEW", st.session_state['master_out'], height=350)
     
     doc_file = create_word_export(u_topic, u_syllabus, st.session_state['master_out'], selected_lang)
     st.download_button(
@@ -463,7 +504,7 @@ st.markdown("---")
 st.markdown(
     """
     <div style='text-align: center; color: grey; font-size: 0.8em;'>
-        <p><b>SMART LESSON PLAN MASTER-PORTAL V1.0</b></p>
+        <p><b>SMART LESSON PLAN MASTER-PORTAL V1.1</b></p>
         <p>CONCEPTUALIZED BY: <b>HAJAH NURUL HAZIQAH @ HJH HARTINI HJ NORDIN</b></p>
         <p>© 2026 PTES Innovation | BSC H.M IN COMPUTER SCIENCE, UNIVERSITY OF STRATHCLYDE</p>
     </div>
