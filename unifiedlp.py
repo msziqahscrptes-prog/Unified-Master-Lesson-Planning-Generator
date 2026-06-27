@@ -32,8 +32,8 @@ LANG_MAP = {
     }
 }
 
-st.set_page_config(page_title="Master Lesson Planner", layout="wide")
-st.title("🎓 MULTI-SYSTEM SMART LESSON PLAN MASTER PORTAL")
+st.set_page_config(page_title="SMART Unified Lesson Planner", layout="wide")
+st.title("🎓 UNIFIED SMART LESSON PLAN MASTER PORTAL")
 
 # --- SIDEBAR CONTROL BAR ---
 st.sidebar.header("🛠️ PORTAL SETTINGS")
@@ -72,7 +72,7 @@ if user_api_key:
     if selected_model_name:
         st.sidebar.success(f"CONNECTED: {selected_model_name.upper()}")
 else:
-    st.sidebar.warning("⚠️ ENTER GEMINI API KEY TO START.")
+    st.sidebar.warning("⚠️ ENTER YOUR OWN GEMINI API KEY BEFORE USING THIS PORTAL.")
 
 
 # --- 2. MULTI-TEMPLATE AI GENERATION ENGINE ---
@@ -191,7 +191,7 @@ def generate_lesson_plan(topic, syllabus, extra_context, api_key, model_name, pl
     - ----------------------------------------------------------------------------
     - Objektif: [3 mata/poin]
     - ----------------------------------------------------------------------------
-    - Tugasan Murid: [Butiran langkah demi langkah]
+    - Tugasan Pelajar: [Butiran langkah demi langkah]
 
     SECTION: AKTIVITI PEMBELAJARAN TERADUN DUA (15 MINIT)
     - Aktiviti 2: [Penerangan]
@@ -200,7 +200,7 @@ def generate_lesson_plan(topic, syllabus, extra_context, api_key, model_name, pl
     - -----------------------------------------------------------------------------
     - Objektif: [3 mata/poin]
     - -----------------------------------------------------------------------------
-    - Tugasan Murid: [Butiran langkah demi langkah]
+    - Tugasan Pelajar: [Butiran langkah demi langkah]
     
     SECTION: PLENARI (TIKET KELUAR)
     [Aktiviti penutup 2-3 minit]
@@ -212,7 +212,7 @@ def generate_lesson_plan(topic, syllabus, extra_context, api_key, model_name, pl
     - [Aktiviti ransangan dan pelan peralihan untuk pelajaran hari esok]"""
 
     # Assemble Prompts Based on Selected App Platform Routes
-    prompt = f"Topic: {topic}. Syllabus Code: {syllabus}. Context: {extra_context}.\n{lang_instruction}\n\nCRITICAL FORMATTING: DO NOT use double asterisks (**) anywhere. Section headers must be full CAPITAL LETTERS.\n\n"
+    prompt = f"Topic: {topic}. Syllabus Code: {syllabus}. Context: {extra_context}.\n{lang_instruction}\n\nCRITICAL FORMATTING: DO NOT use double asterisks (**) anywhere. Section headers must be full CAPITAL LETTERS. Do not use the word MURID, replace it with PELAJAR \n\n"
     
     if platform == "PEDATI Plan":
         prompt += core_criteria + dig_cit + pedati_stages
