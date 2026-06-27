@@ -214,6 +214,7 @@ def generate_lesson_plan(topic, syllabus, extra_context, api_key, model_name, pl
     # Assemble Prompts Based on Selected App Platform Routes
     prompt = f"Topic: {topic}. Syllabus Code: {syllabus}. Context: {extra_context}.\n{lang_instruction}\n\nCRITICAL FORMATTING: \
         DO NOT use double asterisks (**) anywhere. \
+        DO NOT use bulleted points for listings, use numbered line listing only, except for KEYWORD criteria, this is for both English and Malay context. \
         Section headers must be full CAPITAL LETTERS. \
         Jangan gunakan perkataan MURID, perlu digantikan dengan perkataan PELAJAR di dalam kontek Bahasa Melayu sahaja \n\n"
     
