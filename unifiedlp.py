@@ -32,21 +32,21 @@ LANG_MAP = {
     }
 }
 
-st.set_page_config(page_title="SMART Unified Lesson Planner", layout="wide")
-st.title("🎓 UNIFIED SMART LESSON PLAN MASTER PORTAL")
+st.set_page_config(page_title="UNIFIED Lesson Planners", layout="wide")
+st.title("🎓 UNIFIED SMART LESSON PLANNER")
 
 # --- SIDEBAR CONTROL BAR ---
 st.sidebar.header("🛠️ PORTAL SETTINGS")
 
 user_api_key = st.sidebar.text_input(
-    "🔑 ENTER GEMINI API KEY:", 
+    "🔑 ENTER YOUR GEMINI API KEY:", 
     type="password", 
-    help="Get your API key from Google AI Studio."
+    help="Create and get your API key from Google AI Studio."
 )
 
 selected_platform = st.sidebar.selectbox(
     "📂 SELECT LESSON PLANNER TYPE:",
-    ["PEDATI Plan", "UNIVERSAL Plan", "MERGED Plan", "UNIVERSAL (No Dig-Cit)"]
+    ["PEDATI LP", "UNIVERSAL LP", "MERGED LP", "Secondary LP"]
 )
 
 selected_lang = st.sidebar.selectbox(
