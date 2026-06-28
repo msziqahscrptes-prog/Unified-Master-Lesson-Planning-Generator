@@ -255,8 +255,9 @@ SECTION: CADANGAN TUGASAN UTK KELAS AKAN DATANG
 3. EXCEPTION FOR KEYWORDS / KATA KUNCI: Do NOT use any numbers, list markers, or bullets. Just list the words.
 4. ABSOLUTE MALAY LANGUAGE COMPLIANCE: Jangan gunakan perkataan 'MURID'. Menyeluruh kontek dalam Bahasa Melayu sahaja, digantikan dengan perkataan 'PELAJAR'.
 5. Every section marker MUST start explicitly on a new line with 'SECTION: ' followed by the uppercase title.
-6. STRIKT KEPATUHAN STRUKTUR: You are strictly FORBIDDEN from creating custom essay headings (like PENGENALAN, CIRI-CIRI, CABARAN, KESIMPULAN). You MUST ONLY generate content for the exact SECTION blocks provided below. Do not omit any blocks!\n\n"""
-
+6. STRIKT KEPATUHAN STRUKTUR: You are strictly FORBIDDEN from creating custom essay headings (like PENGENALAN, CIRI-CIRI, CABARAN, KESIMPULAN). You MUST ONLY generate content for the exact SECTION blocks provided below. Do not omit any blocks!.
+7. OR STRICT STRUCTURAL COMPLIANCE: You are strictly FORBIDDEN from inventing custom or academic essay headings (such as PENGENALAN, CIRI-CIRI, CABARAN, KESIMPULAN). You MUST exclusively generate content for the exact SECTION blocks provided below. Do not alter the names of the blocks or omit any section!\n\n"""
+    
     if platform == "PEDATI Plan":
         prompt += core_criteria + dig_cit + pedati_stages
     elif platform == "UNIVERSAL Plan":
