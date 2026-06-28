@@ -44,6 +44,7 @@ user_api_key = st.sidebar.text_input(
     help="Create and get your API key from Google AI Studio."
 )
 
+# FIXED: Synchronized cleanly to match requirements across all deployment channels
 selected_platform = st.sidebar.selectbox(
     "📂 SELECT LESSON PLANNER TYPE:",
     ["PEDATI LP", "UNIVERSAL LP", "MERGED LP", "Secondary LP"]
@@ -255,10 +256,9 @@ SECTION: CADANGAN TUGASAN UTK KELAS AKAN DATANG
 3. EXCEPTION FOR KEYWORDS / KATA KUNCI: Do NOT use any numbers, list markers, or bullets. Just list the words.
 4. ABSOLUTE MALAY LANGUAGE COMPLIANCE: Jangan gunakan perkataan 'MURID'. Menyeluruh kontek dalam Bahasa Melayu sahaja, digantikan dengan perkataan 'PELAJAR'.
 5. Every section marker MUST start explicitly on a new line with 'SECTION: ' followed by the uppercase title.
-6. STRIKT KEPATUHAN STRUKTUR: You are strictly FORBIDDEN from creating custom essay headings (like PENGENALAN, CIRI-CIRI, CABARAN, KESIMPULAN). You MUST ONLY generate content for the exact SECTION blocks provided below. Do not omit any blocks!.
-7. OR STRICT STRUCTURAL COMPLIANCE: You are strictly FORBIDDEN from inventing custom or academic essay headings (such as PENGENALAN, CIRI-CIRI, CABARAN, KESIMPULAN). You MUST exclusively generate content for the exact SECTION blocks provided below. Do not alter the names of the blocks or omit any section!\n\n"""
-
-    # FIX: Updated matching logic to track your sidebar selection "Secondary LP"
+6. STRICT STRUCTURAL COMPLIANCE: You are strictly FORBIDDEN from inventing custom or academic essay headings (such as PENGENALAN, CIRI-CIRI, CABARAN, KESIMPULAN). You MUST exclusively generate content for the exact SECTION blocks provided below. Do not alter the names of the blocks or omit any section!\n\n"""
+    
+    # FIXED: String matches are now perfectly tied to your sidebar layout options
     if platform == "PEDATI LP":
         prompt += core_criteria + dig_cit + pedati_stages
     elif platform == "UNIVERSAL LP":
@@ -266,9 +266,8 @@ SECTION: CADANGAN TUGASAN UTK KELAS AKAN DATANG
     elif platform == "MERGED LP":
         prompt += core_criteria + dig_cit + universal_blocks + pedati_stages
     elif platform == "Secondary LP":
-        # Since this is your "No Digital Citizenship" type, we exclude dig_cit
         prompt += core_criteria + universal_blocks
-    
+
     try:
         response = model.generate_content(prompt)
         if response.candidates and response.candidates[0].content.parts:
@@ -376,7 +375,6 @@ def create_word_export(topic, syllabus, text, lang):
         # 1. Custom 3x2 Matrix Processing for Keywords / Kata Kunci
         if meta["keywords_key"] in title:
             keywords_list = []
-            # Split by commas or lines to extract words cleanly
             raw_content = " ".join(content_lines).replace(",", " ")
             for item in raw_content.split():
                 item = item.strip().replace(".", "").replace("-", "")
