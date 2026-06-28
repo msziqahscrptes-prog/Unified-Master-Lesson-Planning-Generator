@@ -257,16 +257,18 @@ SECTION: CADANGAN TUGASAN UTK KELAS AKAN DATANG
 5. Every section marker MUST start explicitly on a new line with 'SECTION: ' followed by the uppercase title.
 6. STRIKT KEPATUHAN STRUKTUR: You are strictly FORBIDDEN from creating custom essay headings (like PENGENALAN, CIRI-CIRI, CABARAN, KESIMPULAN). You MUST ONLY generate content for the exact SECTION blocks provided below. Do not omit any blocks!.
 7. OR STRICT STRUCTURAL COMPLIANCE: You are strictly FORBIDDEN from inventing custom or academic essay headings (such as PENGENALAN, CIRI-CIRI, CABARAN, KESIMPULAN). You MUST exclusively generate content for the exact SECTION blocks provided below. Do not alter the names of the blocks or omit any section!\n\n"""
-    
-    if platform == "PEDATI Plan":
-        prompt += core_criteria + dig_cit + pedati_stages
-    elif platform == "UNIVERSAL Plan":
-        prompt += core_criteria + dig_cit + universal_blocks
-    elif platform == "MERGED Plan":
-        prompt += core_criteria + dig_cit + universal_blocks + pedati_stages
-    elif platform == "UNIVERSAL (No Dig-Cit)":
-        prompt += core_criteria + universal_blocks
 
+    # FIX: Updated matching logic to track your sidebar selection "Secondary LP"
+    if platform == "PEDATI LP":
+        prompt += core_criteria + dig_cit + pedati_stages
+    elif platform == "UNIVERSAL LP":
+        prompt += core_criteria + dig_cit + universal_blocks
+    elif platform == "MERGED LP":
+        prompt += core_criteria + dig_cit + universal_blocks + pedati_stages
+    elif platform == "Secondary LP":
+        # Since this is your "No Digital Citizenship" type, we exclude dig_cit
+        prompt += core_criteria + universal_blocks
+    
     try:
         response = model.generate_content(prompt)
         if response.candidates and response.candidates[0].content.parts:
