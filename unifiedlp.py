@@ -57,11 +57,8 @@ selected_lang = st.sidebar.selectbox(
 
 def get_working_model(api_key):
     try:
-        # Use the modern GenAI client initialization
+        # Client initialization using google-genai
         client = genai.Client(api_key=api_key)
-        
-        # Test connection or inspect modern models array
-        # Fallback instantly to the recommended production standard
         return "gemini-3.5-flash"
     except Exception as e:
         st.sidebar.error(f"INVALID API KEY CONFIGURATION: {str(e)}")
@@ -78,7 +75,6 @@ else:
 
 # --- 2. MULTI-TEMPLATE AI GENERATION ENGINE ---
 def generate_lesson_plan(topic, syllabus, extra_context, api_key, model_name, platform, lang):
-    # Initialize modern SDK client connection block
     client = genai.Client(api_key=api_key)
     
     lang_instruction = "Generate the entire lesson plan in English. NO Malay terms." if lang == "English" else "Penulisan penuh adalah di dalam BAHASA MELAYU sahaja. JANGAN gunakan istilah Bahasa Inggeris."
@@ -248,15 +244,15 @@ SECTION: KERJA RUMAH
 SECTION: CADANGAN TUGASAN UTK KELAS AKAN DATANG
 1. [Aktiviti ransangan dan pelan peralihan untuk pelajaran hari esok]"""
 
-    # Assemble and fine-tune structural prompt guidelines
+    # Assemble prompt
     prompt = f"Topic: {topic}. Syllabus Code: {syllabus}. Context: {extra_context}.\n{lang_instruction}\n\n"
     prompt += """CRITICAL FORMATTING RULES:
 1. DO NOT use double asterisks (**) anywhere.
 2. DO NOT use bullet points (-) for listings. You must use sequential numbered listings (1., 2., 3., 4.) for all content segments.
 3. EXCEPTION FOR KEYWORDS / KATA KUNCI: Do NOT use any numbers, list markers, or bullets. Just list the words.
-4. ABSOLUTE MALAY LANGUAGE COMPLIANCE: Jangan gunakan perkataan 'MURID'. Menyeluruh kontek dalam Bahasa Melayu sahaja, digantikan dengan perkataan 'PELAJAR'.
+4. ABSOLUTE LANGUAGE COMPLIANCE: If language is Malay, do NOT use 'MURID'; replace with 'PELAJAR'. If language is English, keep standard English terms like 'STUDENT'.
 5. Every section marker MUST start explicitly on a new line with 'SECTION: ' followed by the uppercase title.
-6. STRICT STRUCTURAL COMPLIANCE: You are strictly FORBIDDEN from inventing custom or academic essay headings (such as PENGENALAN, CIRI-CIRI, CABARAN, KESIMPULAN). You MUST exclusively generate content for the exact SECTION blocks provided below. Do not alter the names of the blocks or omit any section!\n\n"""
+6. STRICT STRUCTURAL COMPLIANCE: You are strictly FORBIDDEN from inventing custom headings. You MUST exclusively generate content for the exact SECTION blocks provided below.\n\n"""
     
     if platform == "PEDATI LP":
         prompt += core_criteria + dig_cit + pedati_stages
@@ -268,7 +264,6 @@ SECTION: CADANGAN TUGASAN UTK KELAS AKAN DATANG
         prompt += core_criteria + universal_blocks
 
     try:
-        # Modern client invocation syntax structure
         response = client.models.generate_content(
             model=model_name,
             contents=prompt
@@ -276,7 +271,11 @@ SECTION: CADANGAN TUGASAN UTK KELAS AKAN DATANG
         
         if response.text:
             clean_text = response.text.replace("**", "")
-            clean_text = clean_text.replace("Murid", "Pelajar").replace("murid", "pelajar").replace("MURID", "PELAJAR")
+            
+            # --- LANGUAGE-SPECIFIC TEXT CLEANING ---
+            if lang == "Malay":
+                clean_text = clean_text.replace("Murid", "Pelajar").replace("murid", "pelajar").replace("MURID", "PELAJAR")
+                
             return clean_text
         else:
             return "⚠️ The AI returned an empty response. Please wait 60 seconds and try again."
@@ -307,33 +306,28 @@ def create_word_export(topic, syllabus, text, lang):
     meta = LANG_MAP[lang]
     doc = Document()
     
-    # Enforce Letter Geometry Profile & 0.5" Margins
     section = doc.sections[0]
     section.page_width, section.page_height = Inches(8.5), Inches(11.5)
     section.top_margin = section.bottom_margin = Inches(0.5)
     section.left_margin = section.right_margin = Inches(0.5)
     
-    # Page Tracking Setup
     footer_p = section.footer.paragraphs[0]
     footer_p.alignment = 2
     f_run = footer_p.add_run(meta["page_lbl"])
     f_run.font.name, f_run.font.size = 'Arial Narrow', Pt(10)
     add_page_number(f_run)
 
-    # Core Typography Defaults Override (12pt Base)
     style = doc.styles['Normal']
     style.font.name, style.font.size = 'Arial Narrow', Pt(12)
     p_format = style.paragraph_format
     p_format.line_spacing, p_format.space_after, p_format.space_before = 1.0, Pt(0), Pt(0)
 
-    # Document Header Title - 14PT BOLD CAPITALS
     title_p = doc.add_paragraph()
     run_title = title_p.add_run(f'{meta["title_prefix"]}: {topic.upper()} ({syllabus.upper()})')
     run_title.bold = True
     run_title.font.size = Pt(14)
     title_p.paragraph_format.space_after = Pt(6)
 
-    # Admin Table Setup
     admin_table = doc.add_table(rows=3, cols=4)
     admin_table.style = 'Table Grid'
     labels = [["WEEK NO:", "DATE:"], ["NO. OF STUDENTS:", "DAY:"], ["VENUE / LAB NO:", "DURATION (MINS):"]] if lang == "English" else [["MINGGU:", "TARIKH:"], ["BIL. PELAJAR:", "HARI:"], ["TEMPAT / NO MAKMAL:", "TEMPOH (MINIT):"]]
@@ -346,7 +340,6 @@ def create_word_export(topic, syllabus, text, lang):
     
     doc.add_paragraph().paragraph_format.space_after = Pt(6)
 
-    # Resources Setup
     p_res = doc.add_paragraph()
     run_res = p_res.add_run(meta["resources_title"])
     run_res.bold = True
@@ -360,7 +353,6 @@ def create_word_export(topic, syllabus, text, lang):
     
     doc.add_paragraph().paragraph_format.space_after = Pt(6)
 
-    # Content Processing Core Loop Engine Block
     sections = text.split('SECTION:')
     for section in sections:
         if not section.strip(): 
@@ -370,14 +362,12 @@ def create_word_export(topic, syllabus, text, lang):
         title = lines[0].strip().upper().replace("**", "")
         content_lines = lines[1:]
 
-        # Create Headings (Forced 14pt Bold Capitals)
         p_sec = doc.add_paragraph()
         run_sec_title = p_sec.add_run(title)
         run_sec_title.bold = True
         run_sec_title.font.size = Pt(14)
         p_sec.paragraph_format.space_after = Pt(4)
 
-        # 1. Custom 3x2 Matrix Processing for Keywords / Kata Kunci
         if meta["keywords_key"] in title:
             keywords_list = []
             raw_content = " ".join(content_lines).replace(",", " ")
@@ -402,7 +392,6 @@ def create_word_export(topic, syllabus, text, lang):
             
             doc.add_paragraph().paragraph_format.space_after = Pt(6)
 
-        # 2. Custom 3-Column Table Grid processing for PEDATI stages
         elif "|" in section and meta["pedati_key"] in title:
             table = doc.add_table(rows=1, cols=3)
             table.style = 'Table Grid'
@@ -431,7 +420,6 @@ def create_word_export(topic, syllabus, text, lang):
             
             doc.add_paragraph().paragraph_format.space_after = Pt(6)
             
-        # 3. Standard Grid Box Structures Default Block Configuration (Forced 12pt Content)
         else:
             table = doc.add_table(rows=1, cols=1)
             table.style = 'Table Grid'
@@ -442,7 +430,6 @@ def create_word_export(topic, syllabus, text, lang):
             
             doc.add_paragraph().paragraph_format.space_after = Pt(6)
 
-    # 4. HOD Verification Layout
     doc.add_page_break()
     p_hod = doc.add_paragraph()
     run_hod = p_hod.add_run(meta["hod_title"])
